@@ -18,6 +18,18 @@ public class TrackResponse {
     @Expose
     private Integer total;
 
+    @SerializedName("next")
+    @Expose
+    private String next;
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
+    }
+
     public List<Track> getTracks() {
         return tracks;
     }

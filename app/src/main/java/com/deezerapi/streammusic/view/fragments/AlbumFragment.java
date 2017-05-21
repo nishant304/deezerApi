@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nishant on 19.05.17.
@@ -33,15 +34,9 @@ public class AlbumFragment extends BaseFragment {
 
     private AlbumAdapter albumAdapter;
 
-    private Context context;
-
     private ProgressBar progressBar;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
+    private List<Album> albumList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -50,25 +45,30 @@ public class AlbumFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_album_layout,container,false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        albumAdapter = new AlbumAdapter(context,new ArrayList<Album>());
+        albumAdapter = new AlbumAdapter(getActivityContext(),albumList);
         ImageView imageView = (ImageView)view.findViewById(R.id.img);
         imageView.setTransitionName(getArguments().getString("transitionName"));
-        Glide.with(context).load(getArguments().getString("url")).into(imageView);
+        Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
         recyclerView.setAdapter(albumAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(context,2));
-        String query = getArguments().getString("query");
-        ArtisitController.getInstance().getAlbums(query);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivityContext(),2));
         return view;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String query = getArguments().getString("query");
+        ArtisitController.getInstance().getAlbums(query);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAlbumsFetched(AlbumSearchResponse albumSearchResponse){
-        albumAdapter.addNewAlbums(albumSearchResponse.getAlbums());
+        albumList = albumSearchResponse.getAlbums();
+        if(albumAdapter == null){
+            albumAdapter = new AlbumAdapter(getActivityContext(),albumList);
+        }else {
+            albumAdapter.addNewAlbums(albumSearchResponse.getAlbums());
+        }
     }
 
 }

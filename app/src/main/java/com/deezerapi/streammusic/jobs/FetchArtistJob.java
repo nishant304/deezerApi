@@ -25,23 +25,32 @@ public class FetchArtistJob extends Job {
 
     private String qString;
 
-    public FetchArtistJob(String query,String tag){
+    private String index;
+
+    public FetchArtistJob(String query,String tag, String index){
         super(new Params(1).requireNetwork().persist().addTags(tag));
         this.qString = query;
+        this.index = index;
     }
 
     @Override
     public void onRun() throws Throwable {
-        Response<ArtistSearchResponse> response = App.getApiService().searchArtist(qString).execute();
+        Response<ArtistSearchResponse> response = App.getApiService().searchArtist(qString,index).execute();
         if(response.isSuccessful()){
             EventBus.getDefault().post(response.body());
         }
-
     }
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
+
+        //add exponential back off logic here
         return null;
+    }
+
+    @Override
+    protected int getRetryLimit() {
+        return 3;
     }
 
     @Override

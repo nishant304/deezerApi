@@ -20,6 +20,10 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder> {
 
     private Context context;
 
+    public List<Track> getTrackList() {
+        return trackList;
+    }
+
     private List<Track> trackList;
 
     private LayoutInflater layoutInflater;
@@ -31,12 +35,25 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder> {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return trackList.get(position).getType().equals("dummy")?1:0;
+    }
+
+    @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == 1){
+            return new CdHolder(layoutInflater.inflate(R.layout.item_cd_layout,parent,false));
+        }
         return new Holder(layoutInflater.inflate(R.layout.item_track_view,parent,false));
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        if(holder instanceof CdHolder){
+            CdHolder cdHolder = (CdHolder)holder;
+            cdHolder.cdText.setText(trackList.get(position).getTitle());
+            return;
+        }
         holder.tvRank.setText(trackList.get(position).getTrackPosition()+"");
         holder.tvArtistName.setText(trackList.get(position).getArtist().getName());
         holder.tvTrackName.setText(trackList.get(position).getTitle());
@@ -68,6 +85,17 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder> {
             tvArtistName =  (TextView) view.findViewById(R.id.artistName);
             tvTrackLength =  (TextView) view.findViewById(R.id.trackLength);
         }
+    }
+
+    class CdHolder extends Holder{
+
+        private TextView cdText;
+
+        CdHolder(View view){
+            super(view);
+            cdText = (TextView)view.findViewById(R.id.tvCdText);
+        }
+
     }
 
 }

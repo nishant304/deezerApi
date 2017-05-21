@@ -17,6 +17,7 @@ import com.deezerapi.streammusic.jobs.FetchArtistJob;
 import com.deezerapi.streammusic.model.Artist;
 import com.deezerapi.streammusic.model.ArtistSearchResponse;
 import com.deezerapi.streammusic.view.adapter.ArtistAdapter;
+import com.deezerapi.streammusic.view.util.LoadMoreItemsListener;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -28,23 +29,17 @@ import java.util.List;
  * Created by nishant on 19.05.17.
  */
 
-public class ArtistFragment extends BaseFragment implements ViewTreeObserver.OnGlobalLayoutListener {
+public class ArtistFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
 
     private ArtistAdapter artistAdapter;
 
-    private Context context;
-
     private ProgressBar progressBar;
 
     private List<Artist> list = new ArrayList<>();
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
+    private ScrollListener scrollListener;
 
     @Nullable
     @Override
@@ -53,29 +48,39 @@ public class ArtistFragment extends BaseFragment implements ViewTreeObserver.OnG
         View view = inflater.inflate(R.layout.fragment_artist_layout,container,false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        artistAdapter = new ArtistAdapter(context, list);
+        artistAdapter = new ArtistAdapter(getActivityContext(), list);
         recyclerView.setAdapter(artistAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        view.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivityContext());
+        scrollListener = new ScrollListener(linearLayoutManager);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addOnScrollListener(scrollListener);
         return view;
     }
 
-    @Override
-    public void onGlobalLayout() {
-        getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        startPostponedEnterTransition();
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onSearchResult(ArtistSearchResponse response){
+        showProgressBar(false);
+        list.addAll(response.getArtists());
+        artistAdapter.appendData(response.getArtists());
+        ArtisitController.getInstance().onResponse(response);
+        scrollListener.onLoadFinished();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSearchResult(ArtistSearchResponse response){
-        list = response.getArtists();
-        showProgressBar(false);
-        artistAdapter.appendData(response.getArtists());
-    }
+    private class ScrollListener extends LoadMoreItemsListener{
+
+        public ScrollListener(LinearLayoutManager linearLayoutManager){
+            super(linearLayoutManager);
+        }
+
+        @Override
+        public void loadMore() {
+            ArtisitController.getInstance().loadMore();
+        }
+    };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onJobAdded(FetchArtistJob.OnJobAdded onJobAdded){
-        showProgressBar(true);
+        //showProgressBar(true);
     }
 
     private void showProgressBar(boolean showProgress){

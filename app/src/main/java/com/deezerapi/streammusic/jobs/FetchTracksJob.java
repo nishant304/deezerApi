@@ -21,14 +21,17 @@ public class FetchTracksJob  extends Job{
 
     private int alBumId;
 
-    public FetchTracksJob(int albumid){
+    private String index;
+
+    public FetchTracksJob(int albumid,String index){
         super(new Params(1).requireNetwork().persist());
         this.alBumId = albumid;
+        this.index = index;
     }
 
     @Override
     public void onRun() throws Throwable {
-        Response<TrackResponse> response = App.getApiService().getTracksForAlbum(alBumId).execute();
+        Response<TrackResponse> response = App.getApiService().getTracksForAlbum(alBumId,index).execute();
         if(response.isSuccessful()){
             EventBus.getDefault().post(response.body());
         }

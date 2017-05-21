@@ -47,9 +47,8 @@ public class App extends Application {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         jobManager =new JobManager(new Configuration.Builder(App.getApp())
-                .consumerKeepAlive(30)
-                .maxConsumerCount(3).build());
-
+                .consumerKeepAlive(5)
+                .maxConsumerCount(2).build());
     }
 
     public static Retrofit getRetrofit() {

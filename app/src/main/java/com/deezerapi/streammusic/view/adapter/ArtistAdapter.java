@@ -18,6 +18,7 @@ import com.deezerapi.streammusic.view.activity.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,26 +27,25 @@ import java.util.List;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
 
-    private List<Artist> list;
+    public List<Artist> getList() {
+        return list;
+    }
+
+    private List<Artist> list = new ArrayList<>();
 
     private LayoutInflater layoutInflater;
 
     private Context context;
 
     public ArtistAdapter(Context context, List<Artist> list){
-        this.list = list;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
+        appendData(list);
     }
 
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return list.get(position).getId();
     }
 
     @Override

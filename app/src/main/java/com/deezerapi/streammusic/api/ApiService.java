@@ -16,12 +16,12 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @GET("search/artist")
-    Call<ArtistSearchResponse> searchArtist(@Query("q") String query);
+    Call<ArtistSearchResponse> searchArtist(@Query("q") String query, @Query("index") String index );
 
     @GET("search/album")
     Call<AlbumSearchResponse> searchAlbum(@Query("q") String query);
 
     @GET("album/{id}/tracks")
-    Call<TrackResponse> getTracksForAlbum(@Path("id") int id);
+    Call<TrackResponse> getTracksForAlbum(@Path("id") int id,@Query("index") String index);
 
 }
