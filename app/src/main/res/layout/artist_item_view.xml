@@ -9,6 +9,7 @@
         android:id="@+id/ivArtist"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:textColor="@android:color/white"
         app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
@@ -16,6 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
+        android:textColor="@android:color/white"
         android:textSize="18sp"
         android:gravity="center"
         android:text="TextView" />
