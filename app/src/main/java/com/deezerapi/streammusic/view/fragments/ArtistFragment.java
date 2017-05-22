@@ -35,7 +35,6 @@ import butterknife.ButterKnife;
 
 public class ArtistFragment extends BaseFragment {
 
-
     @BindView(R.id.recyclerView)
     public RecyclerView recyclerView;
 
@@ -49,7 +48,6 @@ public class ArtistFragment extends BaseFragment {
     private ScrollListener scrollListener;
 
     private LinearLayoutManager linearLayoutManager;
-
 
     @Nullable
     @Override

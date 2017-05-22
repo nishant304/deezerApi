@@ -11,6 +11,7 @@ import com.deezerapi.streammusic.AppException;
 import com.deezerapi.streammusic.events.album.AlbumJobAdded;
 import com.deezerapi.streammusic.events.album.FetchAlbumEvent;
 import com.deezerapi.streammusic.model.AlbumSearchResponse;
+import com.deezerapi.streammusic.network.AppResponse;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,11 +44,11 @@ public class FetchAlbumJob extends BaseJob {
 
     @Override
     public void onRun() throws Throwable {
-          Response<AlbumSearchResponse> response = App.getApiService().searchAlbum(qString).execute();
-          if(response.isSuccessful()) {
-              EventBus.getDefault().post(new FetchAlbumEvent(response.body(),reqTime,true));
+          AppResponse<AlbumSearchResponse> response = App.getApiEndPoint().searchAlbum(qString);
+          if(response.isSuccess()) {
+              EventBus.getDefault().post(new FetchAlbumEvent(response.getSuccessResponse(),reqTime,true));
           }else{
-              throw new AppException(response.code());
+              throw response.getErrorResposne();
           }
     }
 

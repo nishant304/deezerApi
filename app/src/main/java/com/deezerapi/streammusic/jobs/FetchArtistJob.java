@@ -14,6 +14,7 @@ import com.deezerapi.streammusic.AppException;
 import com.deezerapi.streammusic.api.ApiService;
 import com.deezerapi.streammusic.events.artist.FetchArtistEvent;
 import com.deezerapi.streammusic.model.ArtistSearchResponse;
+import com.deezerapi.streammusic.network.AppResponse;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,11 +42,11 @@ public class FetchArtistJob extends BaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        Response<ArtistSearchResponse> response = App.getApiService().searchArtist(qString,index).execute();
-        if(response.isSuccessful()){
-            EventBus.getDefault().post(new FetchArtistEvent(response.body(),reqTime,true));
+        AppResponse<ArtistSearchResponse> response = App.getApiEndPoint().searchArtist(qString,index);
+        if(response.isSuccess()){
+            EventBus.getDefault().post(new FetchArtistEvent(response.getSuccessResponse(),reqTime,true));
         }else {
-            throw new AppException(response.code());
+            throw response.getErrorResposne();
         }
     }
 

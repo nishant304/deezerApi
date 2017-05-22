@@ -12,6 +12,10 @@ public class AppException extends Throwable {
         this.errorCode = errorCode;
     }
 
+    public AppException(String message){
+        super(message);
+    }
+
     public boolean shouldRetry(){
         return errorCode <400 || errorCode >499;
     }

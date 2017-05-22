@@ -4,7 +4,9 @@ import android.app.Application;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
+import com.deezerapi.streammusic.api.ApiEndPoint;
 import com.deezerapi.streammusic.api.ApiService;
+import com.deezerapi.streammusic.network.RetrofitImpl;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,11 +39,17 @@ public class App extends Application {
 
     private static JobManager jobManager;
 
+    public static ApiEndPoint getApiEndPoint() {
+        return apiEndPoint;
+    }
+
+    private static ApiEndPoint apiEndPoint;
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = this;
+        apiEndPoint = new RetrofitImpl();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
