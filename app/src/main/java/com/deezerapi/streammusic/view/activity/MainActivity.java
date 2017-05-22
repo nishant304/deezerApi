@@ -3,11 +3,14 @@ package com.deezerapi.streammusic.view.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.deezerapi.streammusic.R;
@@ -43,6 +46,16 @@ public class MainActivity extends BaseActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
+                if(!(fragment instanceof ArtistFragment)){
+                    getSupportFragmentManager().popBackStackImmediate("album", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -57,6 +70,16 @@ public class MainActivity extends BaseActivity {
         });
 
         return true;
+    }
+
+    private class FocusChangeListener implements View.OnFocusChangeListener{
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus){
+
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

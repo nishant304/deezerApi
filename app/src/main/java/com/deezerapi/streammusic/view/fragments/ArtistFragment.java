@@ -91,6 +91,7 @@ public class ArtistFragment extends BaseFragment {
     public void onNewQuery(String query){
         artistAdapter.clear();
         if(!query.isEmpty()) {
+            list.clear();
             ArtisitController.getInstance().getArtists(query);
         }
     }

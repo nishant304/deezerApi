@@ -8,6 +8,7 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.deezerapi.streammusic.App;
+import com.deezerapi.streammusic.AppException;
 import com.deezerapi.streammusic.api.ApiService;
 import com.deezerapi.streammusic.model.ArtistSearchResponse;
 
@@ -19,7 +20,7 @@ import retrofit2.Response;
  * Created by nishant on 17.05.17.
  */
 
-public class FetchArtistJob extends Job {
+public class FetchArtistJob extends BaseJob {
 
     private ApiService apiService;
 
@@ -33,29 +34,21 @@ public class FetchArtistJob extends Job {
         this.index = index;
     }
 
+    //Todo add timestmap in response
+
     @Override
     public void onRun() throws Throwable {
         Response<ArtistSearchResponse> response = App.getApiService().searchArtist(qString,index).execute();
         if(response.isSuccessful()){
             EventBus.getDefault().post(response.body());
+        }else {
+            throw new AppException(response.code());
         }
     }
 
     @Override
-    protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
-
-        //add exponential back off logic here
-        return null;
-    }
-
-    @Override
-    protected int getRetryLimit() {
-        return 3;
-    }
-
-    @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        Log.d("nishant","job cancelled");
+
     }
 
     @Override

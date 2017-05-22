@@ -1,5 +1,6 @@
 package com.deezerapi.streammusic.view.util;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -13,7 +14,7 @@ public abstract class LoadMoreItemsListener extends RecyclerView.OnScrollListene
 
     private boolean isloading;
 
-    public LoadMoreItemsListener(LinearLayoutManager linearLayoutManager){
+    public LoadMoreItemsListener(@NonNull LinearLayoutManager linearLayoutManager) {
         this.layoutManager = linearLayoutManager;
     }
 
@@ -28,7 +29,7 @@ public abstract class LoadMoreItemsListener extends RecyclerView.OnScrollListene
         }
     }
 
-    public void onLoadFinished(){
+    public void onLoadFinished() {
         isloading = false;
     }
 

@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.deezerapi.streammusic.R;
 import com.deezerapi.streammusic.model.Artist;
-import com.deezerapi.streammusic.view.activity.AlbumListActivity;
 import com.deezerapi.streammusic.view.activity.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;

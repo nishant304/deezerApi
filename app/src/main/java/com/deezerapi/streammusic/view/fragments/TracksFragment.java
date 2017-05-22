@@ -82,8 +82,9 @@ public class TracksFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void onTracksFetched(TrackResponse trackResponse){
-        //List<Track> list = updateListForMoreVol(trackResponse.getTracks());
-        trackAdapter.appendData(trackResponse.getTracks());
+        int prevSzie = trackAdapter.getItemCount();
+        List<Track> list = updateListForMoreVol(trackResponse.getTracks());
+        trackAdapter.notifyItemRangeInserted(prevSzie,list.size());
         tracksController.onTracksFetched(trackResponse);
         scrollListener.onLoadFinished();
     }
@@ -93,12 +94,17 @@ public class TracksFragment extends BaseFragment {
      * @param tracks
      */
     private List<Track> updateListForMoreVol(List<Track> tracks){
-        ArrayList<Track> updatedTracks =  new ArrayList<>(trackAdapter.getTrackList());
+        List<Track> updatedTracks =  trackAdapter.getTrackList();
+        int intialSize = updatedTracks.size();
         for(int i=0;i<tracks.size();i++){
             if(cdIndex < tracks.get(i).getDiskNumber()){
                 updatedTracks.add(getDummyTrackFor(++cdIndex));
             }
             updatedTracks.add(tracks.get(i));
+        }
+
+        if(intialSize == 0 && cdIndex == 1){
+            updatedTracks.remove(0);
         }
 
         return updatedTracks;
