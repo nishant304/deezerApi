@@ -27,19 +27,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by nishant on 20.05.17.
  */
 
 public class TracksFragment extends BaseFragment {
 
-    private RecyclerView recyclerView;
-
     private TrackAdapter trackAdapter;
-
-    private Context context;
-
-    private ProgressBar progressBar;
 
     private int cdIndex;
 
@@ -49,10 +46,23 @@ public class TracksFragment extends BaseFragment {
 
     private LoadMoreItemsListener scrollListener ;
 
+    @BindView(R.id.recyclerView)
+    public RecyclerView recyclerView;
+
+    @BindView(R.id.progressBar)
+    public ProgressBar progressBar;
+
+    @BindView(R.id.img)
+    public ImageView imageView;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tracksController = new TracksController(getArguments().getInt("albumID"));
+        trackAdapter = new TrackAdapter(getActivityContext(),new ArrayList<Track>());
+        layoutManager = new LinearLayoutManager(getActivityContext());
+        scrollListener = new ScrollListener(layoutManager);
         tracksController.getTracks();
     }
 
@@ -61,21 +71,11 @@ public class TracksFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album_layout,container,false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        trackAdapter = new TrackAdapter(getActivityContext(),new ArrayList<Track>());
-        ImageView imageView = (ImageView)view.findViewById(R.id.img);
+        ButterKnife.bind(this,view);
         imageView.setTransitionName(getArguments().getString("transitionName"));
         Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
         recyclerView.setAdapter(trackAdapter);
-        layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
-        scrollListener = new LoadMoreItemsListener(layoutManager) {
-            @Override
-            public void loadMore() {
-                tracksController.getTracks();
-            }
-        };
         recyclerView.setOnScrollListener(scrollListener);
         return view;
     }
@@ -89,8 +89,21 @@ public class TracksFragment extends BaseFragment {
         scrollListener.onLoadFinished();
     }
 
+    private class ScrollListener extends LoadMoreItemsListener{
+
+        public ScrollListener(LinearLayoutManager linearLayoutManager){
+            super(linearLayoutManager);
+        }
+
+        @Override
+        public void loadMore() {
+            tracksController.getTracks();
+        }
+    };
+
     /***
-     * list is small enough for linear scan as there is no guarantee of list being sorted
+     * Adds cd volume or disk infromation based on disk number info in each track
+     * assumes the list is sorted ....
      * @param tracks
      */
     private List<Track> updateListForMoreVol(List<Track> tracks){

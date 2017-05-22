@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.birbit.android.jobqueue.CancelReason;
 import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.JobHolder;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.deezerapi.streammusic.App;
@@ -29,13 +31,12 @@ public class FetchArtistJob extends BaseJob {
 
     private String index;
 
-    private long reqTime;
+    private long reqTime = System.currentTimeMillis();
 
-    public FetchArtistJob(String query,String tag, String index,long reqTime){
+    public FetchArtistJob(String query,String tag, String index){
         super(new Params(1).requireNetwork().persist().addTags(tag));
         this.qString = query;
         this.index = index;
-        this.reqTime = reqTime;
     }
 
     @Override
@@ -50,7 +51,9 @@ public class FetchArtistJob extends BaseJob {
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        EventBus.getDefault().post(new FetchArtistEvent(null,reqTime,false));
+        if(cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
+            EventBus.getDefault().post(new FetchArtistEvent(null, reqTime, false));
+        }
     }
 
     @Override

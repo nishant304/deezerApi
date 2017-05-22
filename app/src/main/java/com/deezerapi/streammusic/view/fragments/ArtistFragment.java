@@ -26,34 +26,40 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by nishant on 19.05.17.
  */
 
 public class ArtistFragment extends BaseFragment {
 
-    private RecyclerView recyclerView;
+
+    @BindView(R.id.recyclerView)
+    public RecyclerView recyclerView;
+
+    @BindView(R.id.progressBar)
+    public ProgressBar progressBar;
 
     private ArtistAdapter artistAdapter;
-
-    private ProgressBar progressBar;
 
     private List<Artist> list = new ArrayList<>();
 
     private ScrollListener scrollListener;
 
-    private long latestReqTime;
+    private LinearLayoutManager linearLayoutManager;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_layout, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        ButterKnife.bind(this,view);
         artistAdapter = new ArtistAdapter(getActivityContext(), list);
         recyclerView.setAdapter(artistAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivityContext());
+        linearLayoutManager = new LinearLayoutManager(getActivityContext());
         scrollListener = new ScrollListener(linearLayoutManager);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(scrollListener);
@@ -62,9 +68,6 @@ public class ArtistFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onSearchResult(FetchArtistEvent fetchArtistEvent) {
-        if(fetchArtistEvent.getReqTime() < latestReqTime){
-            return;
-        }
         showProgressBar(false);
         if(fetchArtistEvent.isSuccess()) {
             ArtistSearchResponse response = fetchArtistEvent.getArtistSearchResponse();
@@ -73,7 +76,7 @@ public class ArtistFragment extends BaseFragment {
             ArtisitController.getInstance().onResponse(response);
             scrollListener.onLoadFinished();
         }else{
-            makeToast("something went wrong");
+            makeToast("request cancelled");
         }
     }
 
@@ -85,7 +88,7 @@ public class ArtistFragment extends BaseFragment {
 
         @Override
         public void loadMore() {
-            ArtisitController.getInstance().loadMore(latestReqTime);
+            ArtisitController.getInstance().loadMore();
         }
     };
 
@@ -110,8 +113,7 @@ public class ArtistFragment extends BaseFragment {
         artistAdapter.clear();
         if (!query.isEmpty()) {
             list.clear();
-            latestReqTime = System.currentTimeMillis();
-            ArtisitController.getInstance().getArtists(query,latestReqTime);
+            ArtisitController.getInstance().getArtists(query);
         }
     }
 

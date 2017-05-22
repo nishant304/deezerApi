@@ -31,6 +31,8 @@ public class BaseFragment extends Fragment {
 
     private ProgressBar progressBar;
 
+    private boolean isStarted;
+
     private RecyclerView.LayoutManager layoutManager;
 
     protected View findViewById(int id){
