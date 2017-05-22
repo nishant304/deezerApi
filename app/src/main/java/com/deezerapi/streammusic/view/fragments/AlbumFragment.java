@@ -61,9 +61,9 @@ public class AlbumFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         albumAdapter = new AlbumAdapter(getActivityContext(), albumList);
+        albumAdapter.setHasStableIds(true);
         ArtisitController.getInstance().getAlbums(getArguments().getString("query"));
     }
-
 
     @Nullable
     @Override

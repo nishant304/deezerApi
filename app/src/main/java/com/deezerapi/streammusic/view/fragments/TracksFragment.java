@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.deezerapi.streammusic.R;
 import com.deezerapi.streammusic.controller.ArtisitController;
 import com.deezerapi.streammusic.controller.TracksController;
+import com.deezerapi.streammusic.events.tracks.FetchTracksEvent;
 import com.deezerapi.streammusic.model.Track;
 import com.deezerapi.streammusic.model.TrackResponse;
 import com.deezerapi.streammusic.view.adapter.TrackAdapter;
@@ -44,7 +45,7 @@ public class TracksFragment extends BaseFragment {
 
     private TracksController tracksController;
 
-    private LoadMoreItemsListener scrollListener ;
+    private LoadMoreItemsListener scrollListener;
 
     @BindView(R.id.recyclerView)
     public RecyclerView recyclerView;
@@ -60,7 +61,7 @@ public class TracksFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tracksController = new TracksController(getArguments().getInt("albumID"));
-        trackAdapter = new TrackAdapter(getActivityContext(),new ArrayList<Track>());
+        trackAdapter = new TrackAdapter(getActivityContext(), new ArrayList<Track>());
         layoutManager = new LinearLayoutManager(getActivityContext());
         scrollListener = new ScrollListener(layoutManager);
         tracksController.getTracks();
@@ -70,8 +71,8 @@ public class TracksFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_album_layout,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_album_layout, container, false);
+        ButterKnife.bind(this, view);
         imageView.setTransitionName(getArguments().getString("transitionName"));
         Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
         recyclerView.setAdapter(trackAdapter);
@@ -80,18 +81,24 @@ public class TracksFragment extends BaseFragment {
         return view;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void onTracksFetched(TrackResponse trackResponse){
-        int prevSzie = trackAdapter.getItemCount();
-        List<Track> list = updateListForMoreVol(trackResponse.getTracks());
-        trackAdapter.notifyItemRangeInserted(prevSzie,list.size());
-        tracksController.onTracksFetched(trackResponse);
-        scrollListener.onLoadFinished();
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onTracksFetched(FetchTracksEvent tracksEvent) {
+        if (tracksEvent.isSuccess()) {
+            TrackResponse trackResponse = tracksEvent.getTrackResponse();
+            int prevSzie = trackAdapter.getItemCount();
+            List<Track> list = updateListForMoreVol(trackResponse.getTracks());
+            trackAdapter.notifyItemRangeInserted(prevSzie, list.size());
+            tracksController.onTracksFetched(trackResponse);
+            scrollListener.onLoadFinished();
+        } else {
+            scrollListener.onLoadFinished();
+            //snack bar
+        }
     }
 
-    private class ScrollListener extends LoadMoreItemsListener{
+    private class ScrollListener extends LoadMoreItemsListener {
 
-        public ScrollListener(LinearLayoutManager linearLayoutManager){
+        public ScrollListener(LinearLayoutManager linearLayoutManager) {
             super(linearLayoutManager);
         }
 
@@ -99,34 +106,36 @@ public class TracksFragment extends BaseFragment {
         public void loadMore() {
             tracksController.getTracks();
         }
-    };
+    }
+
+    ;
 
     /***
      * Adds cd volume or disk infromation based on disk number info in each track
      * assumes the list is sorted ....
      * @param tracks
      */
-    private List<Track> updateListForMoreVol(List<Track> tracks){
-        List<Track> updatedTracks =  trackAdapter.getTrackList();
+    private List<Track> updateListForMoreVol(List<Track> tracks) {
+        List<Track> updatedTracks = trackAdapter.getTrackList();
         int intialSize = updatedTracks.size();
-        for(int i=0;i<tracks.size();i++){
-            if(cdIndex < tracks.get(i).getDiskNumber()){
+        for (int i = 0; i < tracks.size(); i++) {
+            if (cdIndex < tracks.get(i).getDiskNumber()) {
                 updatedTracks.add(getDummyTrackFor(++cdIndex));
             }
             updatedTracks.add(tracks.get(i));
         }
 
-        if(intialSize == 0 && cdIndex == 1){
+        if (intialSize == 0 && cdIndex == 1) {
             updatedTracks.remove(0);
         }
 
         return updatedTracks;
     }
 
-    private Track getDummyTrackFor(int index){
+    private Track getDummyTrackFor(int index) {
         Track track = new Track();
         track.setType("dummy");
-        track.setTitle("cd "+index);
+        track.setTitle("cd " + index);
         return track;
     }
 

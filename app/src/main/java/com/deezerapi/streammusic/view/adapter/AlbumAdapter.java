@@ -33,6 +33,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
     }
 
     @Override
+    public long getItemId(int position) {
+        return Long.valueOf(albumList.get(position).getId());
+    }
+
+    @Override
     public int getItemCount() {
         return albumList.size();
     }
@@ -69,7 +74,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
 
         @Override
         public void onClick(View v) {
-            int pos = getAdapterPosition();
+            int pos = getLayoutPosition();
             ImageView im = (ImageView) v.findViewById(R.id.ivAlbumCover);
             int id = Integer.valueOf(albumList.get(pos).getId());
             String url = albumList.get(pos).getCoverMedium();

@@ -56,6 +56,7 @@ public class ArtistFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_artist_layout, container, false);
         ButterKnife.bind(this,view);
         artistAdapter = new ArtistAdapter(getActivityContext(), list);
+        artistAdapter.setHasStableIds(true);
         recyclerView.setAdapter(artistAdapter);
         linearLayoutManager = new LinearLayoutManager(getActivityContext());
         scrollListener = new ScrollListener(linearLayoutManager);

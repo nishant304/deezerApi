@@ -43,6 +43,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
     }
 
     @Override
+    public long getItemId(int position) {
+        return list.get(position).getId();
+    }
+
+    @Override
     public int getItemCount() {
         return list.size();
     }
@@ -53,7 +58,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
     }
 
     @Override
-    public void onBindViewHolder(final Holder holder, final int position) {
+    public void onBindViewHolder(final Holder holder, int position) {
         holder.tvArtisitName.setText(list.get(position).getName());
         Glide.with(holder.ivArtistImage.getContext())
                 .load(list.get(position)
@@ -64,7 +69,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
             public void onClick(View v) {
                 ImageView imageView = (ImageView) v.findViewById(R.id.ivArtist);
                 EventBus.getDefault().post(new MainActivity.ArtistSelectedEvent(imageView,
-                        list.get(position).getName(),list.get(position)
+                        list.get(holder.getLayoutPosition()).getName(),list.get(holder.getLayoutPosition())
                         .getPicture()));
             }
         });
