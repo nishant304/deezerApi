@@ -35,21 +35,21 @@ public class ArtisitController {
 
     private int total;
 
-    public void getArtists(String artistName){
+    public void getArtists(String artistName, long reqTime){
         currIndex = 0;
         this.currentQuery = artistName;
         jobManager.cancelJobsInBackground(null, TagConstraint.ANY,tag);
         tag = UUID.randomUUID().toString();
-        jobManager.addJobInBackground(new FetchArtistJob(artistName,tag,null));
+        jobManager.addJobInBackground(new FetchArtistJob(artistName,tag,null,reqTime));
     }
 
     public void getAlbums(String artistName){
         jobManager.addJobInBackground(new FetchAlbumJob(artistName,UUID.randomUUID().toString()));
     }
 
-    public void loadMore(){
+    public void loadMore(long reqTime){
         if(currIndex < total){
-            jobManager.addJobInBackground(new FetchArtistJob(currentQuery,tag,currIndex+""));
+            jobManager.addJobInBackground(new FetchArtistJob(currentQuery,tag,currIndex+"",reqTime));
         }
     }
 

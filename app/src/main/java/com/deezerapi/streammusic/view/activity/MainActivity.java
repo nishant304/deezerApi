@@ -72,16 +72,6 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
-    private class FocusChangeListener implements View.OnFocusChangeListener{
-
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus){
-
-            }
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onArtistSelected(ArtistSelectedEvent  artistSelectedEvent){
         searchView.onActionViewCollapsed();
@@ -108,9 +98,8 @@ public class MainActivity extends BaseActivity {
                 .commit();
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onArtistSelected(AlbumSelectedEvent  albumSelectedEvent){
+    public void onAlbumSelected(AlbumSelectedEvent  albumSelectedEvent){
         TracksFragment tracksFragment = new TracksFragment();
         String transitionName = albumSelectedEvent.imageView.getTransitionName();
         if(transitionName == null){

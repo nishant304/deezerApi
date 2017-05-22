@@ -45,30 +45,34 @@ public class AlbumFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_album_layout,container,false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        albumAdapter = new AlbumAdapter(getActivityContext(),albumList);
         ImageView imageView = (ImageView)view.findViewById(R.id.img);
         imageView.setTransitionName(getArguments().getString("transitionName"));
+
+        if(albumAdapter == null) {
+            albumAdapter = new AlbumAdapter(getActivityContext(), albumList);
+            showProgressBar(true);
+            String query = getArguments().getString("query");
+            ArtisitController.getInstance().getAlbums(query);
+        }
         Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
         recyclerView.setAdapter(albumAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivityContext(),2));
         return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        String query = getArguments().getString("query");
-        ArtisitController.getInstance().getAlbums(query);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onAlbumsFetched(AlbumSearchResponse albumSearchResponse){
-        albumList = albumSearchResponse.getAlbums();
+        showProgressBar(false);
         if(albumAdapter == null){
             albumAdapter = new AlbumAdapter(getActivityContext(),albumList);
         }else {
             albumAdapter.addNewAlbums(albumSearchResponse.getAlbums());
         }
+    }
+
+    private void showProgressBar(boolean showProgress) {
+        recyclerView.setVisibility(showProgress ? View.GONE : View.VISIBLE);
+        progressBar.setVisibility(!showProgress ? View.GONE : View.VISIBLE);
     }
 
 }

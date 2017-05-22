@@ -10,6 +10,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.deezerapi.streammusic.App;
 import com.deezerapi.streammusic.AppException;
 import com.deezerapi.streammusic.api.ApiService;
+import com.deezerapi.streammusic.events.artist.FetchArtistEvent;
 import com.deezerapi.streammusic.model.ArtistSearchResponse;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,19 +29,20 @@ public class FetchArtistJob extends BaseJob {
 
     private String index;
 
-    public FetchArtistJob(String query,String tag, String index){
+    private long reqTime;
+
+    public FetchArtistJob(String query,String tag, String index,long reqTime){
         super(new Params(1).requireNetwork().persist().addTags(tag));
         this.qString = query;
         this.index = index;
+        this.reqTime = reqTime;
     }
-
-    //Todo add timestmap in response
 
     @Override
     public void onRun() throws Throwable {
         Response<ArtistSearchResponse> response = App.getApiService().searchArtist(qString,index).execute();
         if(response.isSuccessful()){
-            EventBus.getDefault().post(response.body());
+            EventBus.getDefault().post(new FetchArtistEvent(response.body(),reqTime,true));
         }else {
             throw new AppException(response.code());
         }
@@ -48,7 +50,7 @@ public class FetchArtistJob extends BaseJob {
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-
+        EventBus.getDefault().post(new FetchArtistEvent(null,reqTime,false));
     }
 
     @Override

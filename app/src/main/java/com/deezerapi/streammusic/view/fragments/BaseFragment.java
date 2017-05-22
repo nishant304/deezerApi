@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.deezerapi.streammusic.R;
 
@@ -59,6 +60,10 @@ public class BaseFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    protected void makeToast(String s){
+        Toast.makeText(context,s,Toast.LENGTH_SHORT).show();
     }
 
 }
