@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
  * Created by nishant on 19.05.17.
  */
 
-public class AlbumFragment extends BaseFragment {
+public class AlbumFragment extends BaseFragment implements Transition.TransitionListener {
 
     @BindView(R.id.recyclerView)
     public RecyclerView recyclerView;
@@ -52,6 +53,8 @@ public class AlbumFragment extends BaseFragment {
 
     private List<Album> albumList = new ArrayList<>();
 
+    private boolean isStarted;
+
     /***
      * keep data intact while views are created multiple times
      * and feet data to views when they are recreated
@@ -62,7 +65,6 @@ public class AlbumFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         albumAdapter = new AlbumAdapter(getActivityContext(), albumList);
         albumAdapter.setHasStableIds(true);
-        ArtisitController.getInstance().getAlbums(getArguments().getString("query"));
     }
 
     @Nullable
@@ -97,6 +99,38 @@ public class AlbumFragment extends BaseFragment {
     private void showProgressBar(boolean showProgress) {
         recyclerView.setVisibility(showProgress ? View.GONE : View.VISIBLE);
         progressBar.setVisibility(!showProgress ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onTransitionStart(Transition transition) {
+        System.out.println("nishant start");
+    }
+    
+    /***
+     * we dont want to fetch data when we are leaving and hence the check
+     * @param transition
+     */
+    @Override
+    public void onTransitionEnd(Transition transition) {
+        if(!isStarted) {
+            isStarted = true;
+            ArtisitController.getInstance().getAlbums(getArguments().getString("query"));
+        }
+    }
+
+    @Override
+    public void onTransitionCancel(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionPause(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionResume(Transition transition) {
+
     }
 
 }

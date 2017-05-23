@@ -56,7 +56,7 @@ public class App extends Application {
                 .build();
         jobManager =new JobManager(new Configuration.Builder(App.getApp())
                 .consumerKeepAlive(5)
-                .maxConsumerCount(2).build());
+                .maxConsumerCount(1).build());
     }
 
     public static Retrofit getRetrofit() {

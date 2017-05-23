@@ -82,9 +82,10 @@ public class MainActivity extends BaseActivity {
         }
         artistSelectedEvent.imageView.setTransitionName(transitionName);
         albumFragment.setEnterTransition(new Fade());
+        ImageTransition imageTransition = new ImageTransition();
+        imageTransition.addListener(albumFragment);
         albumFragment.setSharedElementEnterTransition(
-                new ImageTransition());
-        albumFragment.setSharedElementReturnTransition(new ImageTransition());
+                imageTransition);
 
         Bundle bundle = new Bundle();
         bundle.putString("query",artistSelectedEvent.name);
@@ -107,8 +108,11 @@ public class MainActivity extends BaseActivity {
         }
         albumSelectedEvent.imageView.setTransitionName(transitionName);
         tracksFragment.setEnterTransition(new Fade());
+        ImageTransition imageTransition = new ImageTransition();
+        imageTransition.addListener(tracksFragment);
+
         tracksFragment.setSharedElementEnterTransition(
-                new ImageTransition());
+                imageTransition);
 
         Bundle bundle = new Bundle();
         bundle.putInt("albumID",albumSelectedEvent.id);

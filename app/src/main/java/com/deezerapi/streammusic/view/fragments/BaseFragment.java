@@ -17,6 +17,8 @@ import com.deezerapi.streammusic.R;
 
 import org.greenrobot.eventbus.EventBus;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by nishant on 19.05.17.
  */

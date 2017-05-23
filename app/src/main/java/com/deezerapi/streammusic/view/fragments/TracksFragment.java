@@ -1,10 +1,13 @@
 package com.deezerapi.streammusic.view.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +38,7 @@ import butterknife.ButterKnife;
  * Created by nishant on 20.05.17.
  */
 
-public class TracksFragment extends BaseFragment {
+public class TracksFragment extends BaseFragment implements Transition.TransitionListener{
 
     private TrackAdapter trackAdapter;
 
@@ -47,6 +50,8 @@ public class TracksFragment extends BaseFragment {
 
     private LoadMoreItemsListener scrollListener;
 
+    private boolean isStarted;
+
     @BindView(R.id.recyclerView)
     public RecyclerView recyclerView;
 
@@ -56,7 +61,6 @@ public class TracksFragment extends BaseFragment {
     @BindView(R.id.img)
     public ImageView imageView;
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +68,6 @@ public class TracksFragment extends BaseFragment {
         trackAdapter = new TrackAdapter(getActivityContext(), new ArrayList<Track>());
         layoutManager = new LinearLayoutManager(getActivityContext());
         scrollListener = new ScrollListener(layoutManager);
-        tracksController.getTracks();
     }
 
     @Nullable
@@ -74,11 +77,43 @@ public class TracksFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_album_layout, container, false);
         ButterKnife.bind(this, view);
         imageView.setTransitionName(getArguments().getString("transitionName"));
+
         Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
         recyclerView.setAdapter(trackAdapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setOnScrollListener(scrollListener);
         return view;
+    }
+    @Override
+    public void onTransitionStart(Transition transition) {
+
+    }
+
+    /***
+     * we dont want to fetch data when we are leaving and hence the check
+     * @param transition
+     */
+    @Override
+    public void onTransitionEnd(Transition transition) {
+        if(!isStarted) {
+            isStarted = true;
+            tracksController.getTracks();
+        }
+    }
+
+    @Override
+    public void onTransitionCancel(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionPause(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionResume(Transition transition) {
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
