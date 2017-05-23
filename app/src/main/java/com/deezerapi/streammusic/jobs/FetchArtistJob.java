@@ -34,7 +34,7 @@ public class FetchArtistJob extends BaseJob {
 
     private long reqTime = System.currentTimeMillis();
 
-    public FetchArtistJob(String query,String tag, String index){
+    public FetchArtistJob(String query, String tag, String index) {
         super(new Params(1).requireNetwork().persist().addTags(tag));
         this.qString = query;
         this.index = index;
@@ -42,17 +42,17 @@ public class FetchArtistJob extends BaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        AppResponse<ArtistSearchResponse> response = App.getApiEndPoint().searchArtist(qString,index);
-        if(response.isSuccess()){
-            EventBus.getDefault().post(new FetchArtistEvent(response.getSuccessResponse(),reqTime,true));
-        }else {
+        AppResponse<ArtistSearchResponse> response = App.getApiEndPoint().searchArtist(qString, index);
+        if (response.isSuccess()) {
+            EventBus.getDefault().post(new FetchArtistEvent(response.getSuccessResponse(), reqTime, true));
+        } else {
             throw response.getErrorResposne();
         }
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        if(cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
+        if (cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
             EventBus.getDefault().post(new FetchArtistEvent(null, reqTime, false));
         }
     }
@@ -62,7 +62,7 @@ public class FetchArtistJob extends BaseJob {
         EventBus.getDefault().post(new OnJobAdded());
     }
 
-    public static class OnJobAdded{
+    public static class OnJobAdded {
 
     }
 

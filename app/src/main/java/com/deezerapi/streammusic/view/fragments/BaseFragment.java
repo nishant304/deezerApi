@@ -37,8 +37,8 @@ public class BaseFragment extends Fragment {
 
     private RecyclerView.LayoutManager layoutManager;
 
-    protected View findViewById(int id){
-        if(getView() == null){
+    protected View findViewById(int id) {
+        if (getView() == null) {
             throw new NullPointerException("no view attached yet");
         }
         return getView().findViewById(id);
@@ -50,7 +50,7 @@ public class BaseFragment extends Fragment {
         this.context = context;
     }
 
-    protected Context getActivityContext(){
+    protected Context getActivityContext() {
         return context;
     }
 
@@ -66,8 +66,8 @@ public class BaseFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
-    protected void makeToast(String s){
-        Toast.makeText(context,s,Toast.LENGTH_SHORT).show();
+    protected void makeToast(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
 }

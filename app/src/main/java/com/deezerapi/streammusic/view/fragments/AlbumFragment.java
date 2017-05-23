@@ -55,9 +55,15 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
 
     private boolean isStarted;
 
+    public static final String QUERY = "query";
+
+    public static final String URL = "url";
+
+    public static final String TRANSITION_NAME = "transitionName";
+
     /***
      * keep data intact while views are created multiple times
-     * and feet data to views when they are recreated
+     * and feed data to views when they are recreated
      * @param savedInstanceState
      */
     @Override
@@ -73,8 +79,8 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album_layout, container, false);
         ButterKnife.bind(this, view);
-        imageView.setTransitionName(getArguments().getString("transitionName"));
-        Glide.with(getActivityContext()).load(getArguments().getString("url")).into(imageView);
+        imageView.setTransitionName(getArguments().getString(TRANSITION_NAME));
+        Glide.with(getActivityContext()).load(getArguments().getString(URL)).into(imageView);
         recyclerView.setAdapter(albumAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivityContext(), COUMN_COUNT));
         return view;
@@ -103,18 +109,18 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
 
     @Override
     public void onTransitionStart(Transition transition) {
-        System.out.println("nishant start");
+
     }
-    
+
     /***
-     * we dont want to fetch data when we are leaving and hence the check
+     * we dont want to fetch data when on leave anim and hence the check
      * @param transition
      */
     @Override
     public void onTransitionEnd(Transition transition) {
-        if(!isStarted) {
+        if (!isStarted) {
             isStarted = true;
-            ArtisitController.getInstance().getAlbums(getArguments().getString("query"));
+            ArtisitController.getInstance().getAlbums(getArguments().getString(QUERY));
         }
     }
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.deezerapi.streammusic.R;
+import com.deezerapi.streammusic.events.AlbumSelectedEvent;
 import com.deezerapi.streammusic.model.Album;
 import com.deezerapi.streammusic.view.activity.MainActivity;
 
@@ -27,7 +28,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
 
     private LayoutInflater layoutInflater;
 
-    public AlbumAdapter(Context context, List<Album> albumList){
+    public AlbumAdapter(Context context, List<Album> albumList) {
         this.albumList = albumList;
         this.layoutInflater = LayoutInflater.from(context);
     }
@@ -44,7 +45,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new Holder(layoutInflater.inflate(R.layout.album_item_layout,parent,false));
+        return new Holder(layoutInflater.inflate(R.layout.album_item_layout, parent, false));
     }
 
     @Override
@@ -54,18 +55,18 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
                 load(albumList.get(position).getCoverMedium()).into(holder.ivAlbumImage);
     }
 
-    public void addNewAlbums(List<Album> list){
+    public void addNewAlbums(List<Album> list) {
         int pos = albumList.size();
         albumList.addAll(list);
-        notifyItemRangeInserted(pos,list.size());
+        notifyItemRangeInserted(pos, list.size());
     }
 
-    class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView ivAlbumImage;
         private TextView tvAlbumName;
 
-        Holder(View view){
+        Holder(View view) {
             super(view);
             view.setOnClickListener(this);
             ivAlbumImage = (ImageView) view.findViewById(R.id.ivAlbumCover);
@@ -78,7 +79,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
             ImageView im = (ImageView) v.findViewById(R.id.ivAlbumCover);
             int id = Integer.valueOf(albumList.get(pos).getId());
             String url = albumList.get(pos).getCoverMedium();
-            EventBus.getDefault().post(new MainActivity.AlbumSelectedEvent(im,id,url));
+            EventBus.getDefault().post(new AlbumSelectedEvent(im, id, url));
         }
     }
 

@@ -10,7 +10,7 @@ public class BaseEvent {
 
     private boolean isSuccess;
 
-    public BaseEvent(long reqTime, boolean isSuccess){
+    public BaseEvent(long reqTime, boolean isSuccess) {
         this.reqTime = reqTime;
         this.isSuccess = isSuccess;
     }

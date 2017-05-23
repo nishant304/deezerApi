@@ -20,7 +20,7 @@ import retrofit2.Response;
  * Created by nishant on 20.05.17.
  */
 
-public class FetchTracksJob  extends BaseJob{
+public class FetchTracksJob extends BaseJob {
 
     private int alBumId;
 
@@ -28,7 +28,7 @@ public class FetchTracksJob  extends BaseJob{
 
     private long startTime = System.currentTimeMillis();
 
-    public FetchTracksJob(int albumid,String index){
+    public FetchTracksJob(int albumid, String index) {
         super(new Params(1).requireNetwork().persist());
         this.alBumId = albumid;
         this.index = index;
@@ -36,10 +36,10 @@ public class FetchTracksJob  extends BaseJob{
 
     @Override
     public void onRun() throws Throwable {
-        AppResponse<TrackResponse> response = App.getApiEndPoint().getTracksForAlbum(alBumId,index);
-        if(response.isSuccess()){
+        AppResponse<TrackResponse> response = App.getApiEndPoint().getTracksForAlbum(alBumId, index);
+        if (response.isSuccess()) {
             EventBus.getDefault().post(new FetchTracksEvent(response.getSuccessResponse(), startTime, true));
-        }else{
+        } else {
             throw response.getErrorResposne();
         }
     }

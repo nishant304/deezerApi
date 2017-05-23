@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.deezerapi.streammusic.ArtistSelectedEvent;
 import com.deezerapi.streammusic.R;
 import com.deezerapi.streammusic.model.Artist;
 import com.deezerapi.streammusic.view.activity.MainActivity;
@@ -36,7 +37,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
 
     private Context context;
 
-    public ArtistAdapter(Context context, List<Artist> list){
+    public ArtistAdapter(Context context, List<Artist> list) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         appendData(list);
@@ -54,7 +55,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new Holder(layoutInflater.inflate(R.layout.artist_item_view,parent,false));
+        return new Holder(layoutInflater.inflate(R.layout.artist_item_view, parent, false));
     }
 
     @Override
@@ -68,17 +69,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
             @Override
             public void onClick(View v) {
                 ImageView imageView = (ImageView) v.findViewById(R.id.ivArtist);
-                EventBus.getDefault().post(new MainActivity.ArtistSelectedEvent(imageView,
-                        list.get(holder.getLayoutPosition()).getName(),list.get(holder.getLayoutPosition())
+                EventBus.getDefault().post(new ArtistSelectedEvent(imageView,
+                        list.get(holder.getLayoutPosition()).getName(), list.get(holder.getLayoutPosition())
                         .getPicture()));
             }
         });
     }
 
-    public void appendData(List<Artist> list){
+    public void appendData(List<Artist> list) {
         int initialSize = this.list.size();
         this.list.addAll(list);
-        notifyItemRangeInserted(initialSize,list.size());
+        notifyItemRangeInserted(initialSize, list.size());
     }
 
     @Override
@@ -87,21 +88,21 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
         Glide.clear(holder.ivArtistImage);
     }
 
-    public void clear(){
+    public void clear() {
         list.clear();
         notifyDataSetChanged();
     }
 
-    static class Holder extends RecyclerView.ViewHolder{
+    static class Holder extends RecyclerView.ViewHolder {
 
         private ImageView ivArtistImage;
         private TextView tvArtisitName;
 
         private View view;
 
-        Holder(View view){
+        Holder(View view) {
             super(view);
-            this.view  = view;
+            this.view = view;
             ivArtistImage = (ImageView) view.findViewById(R.id.ivArtist);
             tvArtisitName = (TextView) view.findViewById(R.id.tvArtist);
         }

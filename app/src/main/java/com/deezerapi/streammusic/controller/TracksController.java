@@ -21,21 +21,21 @@ public class TracksController {
 
     private int total;
 
-    private  int curr;
+    private int curr;
 
     public TracksController(int albumId) {
         this.albumId = albumId;
     }
 
     public void getTracks() {
-        if (total == 0){
+        if (total == 0) {
             jobManager.addJobInBackground(new FetchTracksJob(albumId, null));
-        }else if(curr < total) {
-            jobManager.addJobInBackground(new FetchTracksJob(albumId, curr+""));
+        } else if (curr < total) {
+            jobManager.addJobInBackground(new FetchTracksJob(albumId, curr + ""));
         }
     }
 
-    public void onTracksFetched(TrackResponse trackResponse){
+    public void onTracksFetched(TrackResponse trackResponse) {
         curr += trackResponse.getTracks().size();
         total = trackResponse.getTotal();
     }

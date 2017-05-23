@@ -21,6 +21,9 @@ public class BaseActivity extends AppCompatActivity {
                 .add(id,fragment).commit();
     }
 
+
+
+
     @Override
     protected void onStart() {
         super.onStart();

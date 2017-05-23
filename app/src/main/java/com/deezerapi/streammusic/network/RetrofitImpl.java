@@ -20,9 +20,10 @@ public class RetrofitImpl implements ApiEndPoint {
     public AppResponse<AlbumSearchResponse> searchAlbum(String query) {
         try {
             Response<AlbumSearchResponse> response = App.getApiService().searchAlbum(query).execute();
-            return  new AppResponse<AlbumSearchResponse>(response.isSuccessful(),response.body(),new AppException(response.code()));
-        }catch (Exception ex){
-            return new AppResponse<AlbumSearchResponse>(false, null, new AppException(ex.getMessage()) );        }
+            return new AppResponse<AlbumSearchResponse>(response.isSuccessful(), response.body(), new AppException(response.code()));
+        } catch (Exception ex) {
+            return new AppResponse<AlbumSearchResponse>(false, null, new AppException(ex.getMessage()));
+        }
     }
 
     @Override
@@ -30,8 +31,9 @@ public class RetrofitImpl implements ApiEndPoint {
         try {
             Response<ArtistSearchResponse> response = App.getApiService().searchArtist(query, index).execute();
             return new AppResponse<ArtistSearchResponse>(response.isSuccessful(), response.body(), new AppException(response.code()));
-        }catch (Exception ex) {
-            return new AppResponse<ArtistSearchResponse>(false, null, new AppException(ex.getMessage()));        }
+        } catch (Exception ex) {
+            return new AppResponse<ArtistSearchResponse>(false, null, new AppException(ex.getMessage()));
+        }
     }
 
     @Override
@@ -39,7 +41,7 @@ public class RetrofitImpl implements ApiEndPoint {
         try {
             Response<TrackResponse> response = App.getApiService().getTracksForAlbum(id, index).execute();
             return new AppResponse<TrackResponse>(response.isSuccessful(), response.body(), new AppException(response.code()));
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             return new AppResponse<TrackResponse>(false, null, new AppException(ex.getMessage()));
         }
     }

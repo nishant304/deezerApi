@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.deezerapi.streammusic.ArtistSelectedEvent;
 import com.deezerapi.streammusic.R;
+import com.deezerapi.streammusic.events.AlbumSelectedEvent;
 import com.deezerapi.streammusic.view.fragments.AlbumFragment;
 import com.deezerapi.streammusic.view.fragments.ArtistFragment;
 import com.deezerapi.streammusic.view.fragments.TracksFragment;
@@ -30,28 +32,28 @@ public class MainActivity extends BaseActivity {
 
     private SearchView searchView;
 
+    private static final String ALBUM_TAG = "album";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         artistFragment = new ArtistFragment();
-        addFragment(R.id.container,artistFragment);
+        addFragment(R.id.container, artistFragment);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
         searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
-                if(!(fragment instanceof ArtistFragment)){
-                    getSupportFragmentManager().popBackStackImmediate("album", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if (!(fragment instanceof ArtistFragment)) {
+                    getSupportFragmentManager().popBackStackImmediate(ALBUM_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
             }
         });
@@ -73,11 +75,12 @@ public class MainActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onArtistSelected(ArtistSelectedEvent  artistSelectedEvent){
+    public void onArtistSelected(ArtistSelectedEvent artistSelectedEvent) {
         searchView.onActionViewCollapsed();
+
         AlbumFragment albumFragment = new AlbumFragment();
-        String transitionName = artistSelectedEvent.imageView.getTransitionName();
-        if(transitionName == null){
+        String transitionName = artistSelectedEvent.getImageView().getTransitionName();
+        if (transitionName == null) {
             transitionName = UUID.randomUUID().toString();
         }
         artistSelectedEvent.imageView.setTransitionName(transitionName);
@@ -88,66 +91,44 @@ public class MainActivity extends BaseActivity {
                 imageTransition);
 
         Bundle bundle = new Bundle();
-        bundle.putString("query",artistSelectedEvent.name);
-        bundle.putString("url",artistSelectedEvent.url);
-        bundle.putString("transitionName",transitionName);
+        bundle.putString(AlbumFragment.QUERY, artistSelectedEvent.getName());
+        bundle.putString(AlbumFragment.URL, artistSelectedEvent.getUrl());
+        bundle.putString(AlbumFragment.TRANSITION_NAME, transitionName);
         albumFragment.setArguments(bundle);
+
         getSupportFragmentManager().beginTransaction()
-                .addSharedElement(artistSelectedEvent.imageView,transitionName)
-                .addToBackStack("album")
-                .replace(R.id.container,albumFragment)
+                .addSharedElement(artistSelectedEvent.getImageView(), transitionName)
+                .addToBackStack(ALBUM_TAG)
+                .replace(R.id.container, albumFragment)
                 .commit();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAlbumSelected(AlbumSelectedEvent  albumSelectedEvent){
+    public void onAlbumSelected(AlbumSelectedEvent albumSelectedEvent) {
         TracksFragment tracksFragment = new TracksFragment();
-        String transitionName = albumSelectedEvent.imageView.getTransitionName();
-        if(transitionName == null){
+
+        String transitionName = albumSelectedEvent.getImageView().getTransitionName();
+        if (transitionName == null) {
             transitionName = UUID.randomUUID().toString();
         }
-        albumSelectedEvent.imageView.setTransitionName(transitionName);
+        albumSelectedEvent.getImageView().setTransitionName(transitionName);
         tracksFragment.setEnterTransition(new Fade());
         ImageTransition imageTransition = new ImageTransition();
         imageTransition.addListener(tracksFragment);
-
         tracksFragment.setSharedElementEnterTransition(
                 imageTransition);
 
         Bundle bundle = new Bundle();
-        bundle.putInt("albumID",albumSelectedEvent.id);
-        bundle.putString("url",albumSelectedEvent.url);
-        bundle.putString("transitionName",transitionName);
+        bundle.putInt(TracksFragment.ALBUM_ID, albumSelectedEvent.getId());
+        bundle.putString(TracksFragment.URL, albumSelectedEvent.getUrl());
+        bundle.putString(TracksFragment.TRANSITION_NAME, transitionName);
         tracksFragment.setArguments(bundle);
+
         getSupportFragmentManager().beginTransaction()
-                .addSharedElement(albumSelectedEvent.imageView,transitionName)
+                .addSharedElement(albumSelectedEvent.imageView, transitionName)
                 .addToBackStack(null)
-                .replace(R.id.container,tracksFragment)
+                .replace(R.id.container, tracksFragment)
                 .commit();
-    }
-
-    public static class ArtistSelectedEvent{
-        public ImageView imageView;
-        public String name ;
-        public String url;
-
-        public ArtistSelectedEvent(ImageView imageView, String name,String url){
-            this.imageView = imageView;
-            this.name = name;
-            this.url = url;
-        }
-    }
-
-    public static class AlbumSelectedEvent{
-        public ImageView imageView;
-        public int id;
-        public String url;
-
-        public AlbumSelectedEvent(ImageView imageView, int id, String url){
-            this.imageView = imageView;
-            this.id = id;
-            this.url = url;
-        }
     }
 
 }

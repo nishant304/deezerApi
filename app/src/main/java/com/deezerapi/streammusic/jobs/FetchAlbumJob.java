@@ -27,29 +27,29 @@ public class FetchAlbumJob extends BaseJob {
 
     private long reqTime = System.currentTimeMillis();
 
-    public FetchAlbumJob(String query,String tag){
+    public FetchAlbumJob(String query, String tag) {
         super(new Params(1).requireNetwork().persist().addTags(tag));
         this.qString = query;
     }
 
     @Override
     public void onAdded() {
-        EventBus.getDefault().post(new AlbumJobAdded(reqTime,false));
+        EventBus.getDefault().post(new AlbumJobAdded(reqTime, false));
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        EventBus.getDefault().post(new FetchAlbumEvent(null,reqTime,false));
+        EventBus.getDefault().post(new FetchAlbumEvent(null, reqTime, false));
     }
 
     @Override
     public void onRun() throws Throwable {
-          AppResponse<AlbumSearchResponse> response = App.getApiEndPoint().searchAlbum(qString);
-          if(response.isSuccess()) {
-              EventBus.getDefault().post(new FetchAlbumEvent(response.getSuccessResponse(),reqTime,true));
-          }else{
-              throw response.getErrorResposne();
-          }
+        AppResponse<AlbumSearchResponse> response = App.getApiEndPoint().searchAlbum(qString);
+        if (response.isSuccess()) {
+            EventBus.getDefault().post(new FetchAlbumEvent(response.getSuccessResponse(), reqTime, true));
+        } else {
+            throw response.getErrorResposne();
+        }
     }
 
 }

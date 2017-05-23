@@ -13,7 +13,7 @@ import com.deezerapi.streammusic.AppException;
 
 public abstract class BaseJob extends Job {
 
-    public BaseJob(Params params){
+    public BaseJob(Params params) {
         super(params);
     }
 
@@ -21,10 +21,10 @@ public abstract class BaseJob extends Job {
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
 
-        if(throwable instanceof AppException){
+        if (throwable instanceof AppException) {
             AppException appException = (AppException) throwable;
-            if(appException.shouldRetry()){
-                return RetryConstraint.createExponentialBackoff(runCount,1000);
+            if (appException.shouldRetry()) {
+                return RetryConstraint.createExponentialBackoff(runCount, 1000);
             }
         }
         return RetryConstraint.CANCEL;

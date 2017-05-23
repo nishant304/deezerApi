@@ -12,19 +12,19 @@ public class AppResponse<T> {
 
     private T t;
 
-    private  AppException appException;
+    private AppException appException;
 
-    public AppResponse(boolean isSucess, T t, AppException appException){
+    public AppResponse(boolean isSucess, T t, AppException appException) {
         this.isSuccess = isSucess;
-        this.t= t;
+        this.t = t;
         this.appException = appException;
     }
 
-    public T getSuccessResponse(){
+    public T getSuccessResponse() {
         return t;
     }
 
-    public AppException getErrorResposne(){
+    public AppException getErrorResposne() {
         return appException;
     }
 

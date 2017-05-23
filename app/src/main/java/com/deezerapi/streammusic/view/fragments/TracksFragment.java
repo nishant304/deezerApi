@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
  * Created by nishant on 20.05.17.
  */
 
-public class TracksFragment extends BaseFragment implements Transition.TransitionListener{
+public class TracksFragment extends BaseFragment implements Transition.TransitionListener {
 
     private TrackAdapter trackAdapter;
 
@@ -60,6 +60,16 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
 
     @BindView(R.id.img)
     public ImageView imageView;
+
+    public static final String ALBUM_ID = "albumID";
+
+    public static final String URL = "url";
+
+    public static final String TRANSITION_NAME = "transitionName";
+
+    public static final String DUMMY_STRING = "dummy";
+
+    public static final String CD_STRING = "cd";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,18 +94,19 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
         recyclerView.setOnScrollListener(scrollListener);
         return view;
     }
+
     @Override
     public void onTransitionStart(Transition transition) {
 
     }
 
     /***
-     * we dont want to fetch data when we are leaving and hence the check
+     * we dont want to fetch data leave transition and hence the check
      * @param transition
      */
     @Override
     public void onTransitionEnd(Transition transition) {
-        if(!isStarted) {
+        if (!isStarted) {
             isStarted = true;
             tracksController.getTracks();
         }
@@ -141,9 +152,7 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
         public void loadMore() {
             tracksController.getTracks();
         }
-    }
-
-    ;
+    };
 
     /***
      * Adds cd volume or disk infromation based on disk number info in each track
@@ -161,7 +170,7 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
         }
 
         if (intialSize == 0 && cdIndex == 1) {
-            updatedTracks.remove(0);
+            updatedTracks.remove(0);  //expensive in huge list, which is unexpected
         }
 
         return updatedTracks;
@@ -169,8 +178,8 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
 
     private Track getDummyTrackFor(int index) {
         Track track = new Track();
-        track.setType("dummy");
-        track.setTitle("cd " + index);
+        track.setType(DUMMY_STRING);
+        track.setTitle(CD_STRING + index);
         return track;
     }
 

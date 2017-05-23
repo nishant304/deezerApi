@@ -54,7 +54,7 @@ public class ArtistFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_layout, container, false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
         artistAdapter = new ArtistAdapter(getActivityContext(), list);
         artistAdapter.setHasStableIds(true);
         recyclerView.setAdapter(artistAdapter);
@@ -68,13 +68,13 @@ public class ArtistFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onSearchResult(FetchArtistEvent fetchArtistEvent) {
         showProgressBar(false);
-        if(fetchArtistEvent.isSuccess()) {
+        if (fetchArtistEvent.isSuccess()) {
             ArtistSearchResponse response = fetchArtistEvent.getArtistSearchResponse();
             list.addAll(response.getArtists());
             artistAdapter.appendData(response.getArtists());
             ArtisitController.getInstance().onResponse(response);
             scrollListener.onLoadFinished();
-        }else{
+        } else {
             makeToast("request cancelled");
         }
     }
@@ -89,7 +89,9 @@ public class ArtistFragment extends BaseFragment {
         public void loadMore() {
             ArtisitController.getInstance().loadMore();
         }
-    };
+    }
+
+    ;
 
     /***
      *  if list size is not zero then user has requested for more items and progressbar
