@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -49,17 +50,30 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return list.get(position).getId() == Integer.MAX_VALUE ? 1 : 0;
+    }
+
+    @Override
     public int getItemCount() {
         return list.size();
     }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == 1){
+            return new ProgressBarHolder(layoutInflater.inflate(R.layout.progress_layout, parent, false));
+        }
         return new Holder(layoutInflater.inflate(R.layout.artist_item_view, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final Holder holder, int position) {
+
+        if(holder instanceof ProgressBarHolder){
+            return;
+        }
+
         holder.tvArtisitName.setText(list.get(position).getName());
         Glide.with(holder.ivArtistImage.getContext())
                 .load(list.get(position)
@@ -78,6 +92,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
 
     public void appendData(List<Artist> list) {
         int initialSize = this.list.size();
+        if (initialSize != 0) {
+            this.list.remove(this.list.size() - 1);
+            notifyItemRemoved(initialSize - 1);
+        }
         this.list.addAll(list);
         notifyItemRangeInserted(initialSize, list.size());
     }
@@ -85,12 +103,21 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
     @Override
     public void onViewRecycled(Holder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(holder.ivArtistImage);
+        if(!(holder instanceof ProgressBarHolder)) {
+            Glide.clear(holder.ivArtistImage);
+        }
     }
 
     public void clear() {
         list.clear();
         notifyDataSetChanged();
+    }
+
+    public void onLoadMore(){
+        Artist artist = new Artist();
+        artist.setId(Integer.MAX_VALUE);
+        this.list.add(artist);
+        notifyItemInserted(list.size()-1);
     }
 
     static class Holder extends RecyclerView.ViewHolder {
@@ -106,6 +133,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
             ivArtistImage = (ImageView) view.findViewById(R.id.ivArtist);
             tvArtisitName = (TextView) view.findViewById(R.id.tvArtist);
         }
+    }
+
+    static class ProgressBarHolder extends Holder{
+
+        private ProgressBar progressBar;
+
+        ProgressBarHolder(View view){
+            super(view);
+            this.progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        }
+
     }
 
 }

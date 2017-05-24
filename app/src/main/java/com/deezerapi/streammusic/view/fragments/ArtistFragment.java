@@ -89,9 +89,8 @@ public class ArtistFragment extends BaseFragment {
         public void loadMore() {
             ArtisitController.getInstance().loadMore();
         }
-    }
+    };
 
-    ;
 
     /***
      *  if list size is not zero then user has requested for more items and progressbar
@@ -102,6 +101,8 @@ public class ArtistFragment extends BaseFragment {
     public void onJobAdded(FetchArtistJob.OnJobAdded onJobAdded) {
         if (list.size() == 0) {
             showProgressBar(true);
+        }else {
+            artistAdapter.onLoadMore();
         }
     }
 
