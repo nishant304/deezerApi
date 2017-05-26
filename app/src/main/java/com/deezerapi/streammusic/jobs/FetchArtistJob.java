@@ -44,7 +44,7 @@ public class FetchArtistJob extends BaseJob {
     public void onRun() throws Throwable {
         AppResponse<ArtistSearchResponse> response = App.getApiEndPoint().searchArtist(qString, index);
         if (response.isSuccess()) {
-            EventBus.getDefault().post(new FetchArtistEvent(response.getSuccessResponse(), reqTime, true));
+            EventBus.getDefault().postSticky(new FetchArtistEvent(response.getSuccessResponse(), reqTime, true));
         } else {
             throw response.getErrorResposne();
         }
@@ -53,13 +53,13 @@ public class FetchArtistJob extends BaseJob {
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         if (cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
-            EventBus.getDefault().post(new FetchArtistEvent(null, reqTime, false));
+            EventBus.getDefault().postSticky(new FetchArtistEvent(null, reqTime, false));
         }
     }
 
     @Override
     public void onAdded() {
-        EventBus.getDefault().post(new OnJobAdded());
+        EventBus.getDefault().postSticky(new OnJobAdded());
     }
 
     public static class OnJobAdded {

@@ -34,19 +34,19 @@ public class FetchAlbumJob extends BaseJob {
 
     @Override
     public void onAdded() {
-        EventBus.getDefault().post(new AlbumJobAdded(reqTime, false));
+        EventBus.getDefault().postSticky(new AlbumJobAdded(reqTime, false));
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        EventBus.getDefault().post(new FetchAlbumEvent(null, reqTime, false));
+        EventBus.getDefault().postSticky(new FetchAlbumEvent(null, reqTime, false));
     }
 
     @Override
     public void onRun() throws Throwable {
         AppResponse<AlbumSearchResponse> response = App.getApiEndPoint().searchAlbum(qString);
         if (response.isSuccess()) {
-            EventBus.getDefault().post(new FetchAlbumEvent(response.getSuccessResponse(), reqTime, true));
+            EventBus.getDefault().postSticky(new FetchAlbumEvent(response.getSuccessResponse(), reqTime, true));
         } else {
             throw response.getErrorResposne();
         }

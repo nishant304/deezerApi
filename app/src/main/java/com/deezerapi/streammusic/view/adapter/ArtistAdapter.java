@@ -143,7 +143,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
             super(view);
             this.progressBar = (ProgressBar) view.findViewById(R.id.progress);
         }
-
     }
 
 }

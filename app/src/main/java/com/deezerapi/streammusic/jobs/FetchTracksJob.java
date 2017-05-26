@@ -38,7 +38,7 @@ public class FetchTracksJob extends BaseJob {
     public void onRun() throws Throwable {
         AppResponse<TrackResponse> response = App.getApiEndPoint().getTracksForAlbum(alBumId, index);
         if (response.isSuccess()) {
-            EventBus.getDefault().post(new FetchTracksEvent(response.getSuccessResponse(), startTime, true));
+            EventBus.getDefault().postSticky(new FetchTracksEvent(response.getSuccessResponse(), startTime, true));
         } else {
             throw response.getErrorResposne();
         }
@@ -51,7 +51,7 @@ public class FetchTracksJob extends BaseJob {
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        EventBus.getDefault().post(new FetchTracksEvent(null, startTime, false));
+        EventBus.getDefault().postSticky(new FetchTracksEvent(null, startTime, false));
     }
 
 }

@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 
 import com.deezerapi.streammusic.R;
 import com.deezerapi.streammusic.controller.ArtisitController;
+import com.deezerapi.streammusic.events.album.FetchAlbumEvent;
 import com.deezerapi.streammusic.events.artist.FetchArtistEvent;
 import com.deezerapi.streammusic.jobs.FetchArtistJob;
 import com.deezerapi.streammusic.model.Artist;
@@ -20,6 +21,7 @@ import com.deezerapi.streammusic.model.ArtistSearchResponse;
 import com.deezerapi.streammusic.view.adapter.ArtistAdapter;
 import com.deezerapi.streammusic.view.util.LoadMoreItemsListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -77,6 +79,12 @@ public class ArtistFragment extends BaseFragment {
         } else {
             makeToast("request cancelled");
         }
+
+        FetchArtistEvent sticky = EventBus.getDefault().getStickyEvent(FetchArtistEvent.class);
+        if(sticky != null){
+            EventBus.getDefault().removeStickyEvent(sticky);
+        }
+
     }
 
     private class ScrollListener extends LoadMoreItemsListener {
@@ -103,6 +111,11 @@ public class ArtistFragment extends BaseFragment {
             showProgressBar(true);
         }else {
             artistAdapter.onLoadMore();
+        }
+
+        FetchArtistJob.OnJobAdded sticy = EventBus.getDefault().getStickyEvent(FetchArtistJob.OnJobAdded.class);
+        if(sticy != null){
+            EventBus.getDefault().removeStickyEvent(sticy);
         }
     }
 

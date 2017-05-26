@@ -21,6 +21,7 @@ import com.deezerapi.streammusic.model.Album;
 import com.deezerapi.streammusic.model.AlbumSearchResponse;
 import com.deezerapi.streammusic.view.adapter.AlbumAdapter;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -86,6 +87,12 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onAlbumsFetched(FetchAlbumEvent fetchAlbumEvent) {
         showProgressBar(false);
@@ -95,11 +102,21 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
         } else {
             //snack bar
         }
+
+        FetchAlbumEvent sticky = EventBus.getDefault().getStickyEvent(FetchAlbumEvent.class);
+        if(sticky != null){
+            EventBus.getDefault().removeStickyEvent(sticky);
+        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onRequestAdded(AlbumJobAdded albumJobAdded) {
         showProgressBar(true);
+        AlbumJobAdded sticky = EventBus.getDefault().getStickyEvent(AlbumJobAdded.class);
+        if(sticky != null){
+            EventBus.getDefault().removeStickyEvent(sticky);
+        }
     }
 
     private void showProgressBar(boolean showProgress) {

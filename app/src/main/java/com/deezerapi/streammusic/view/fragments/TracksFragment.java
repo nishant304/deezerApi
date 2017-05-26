@@ -18,12 +18,14 @@ import com.bumptech.glide.Glide;
 import com.deezerapi.streammusic.R;
 import com.deezerapi.streammusic.controller.ArtisitController;
 import com.deezerapi.streammusic.controller.TracksController;
+import com.deezerapi.streammusic.events.album.FetchAlbumEvent;
 import com.deezerapi.streammusic.events.tracks.FetchTracksEvent;
 import com.deezerapi.streammusic.model.Track;
 import com.deezerapi.streammusic.model.TrackResponse;
 import com.deezerapi.streammusic.view.adapter.TrackAdapter;
 import com.deezerapi.streammusic.view.util.LoadMoreItemsListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -139,6 +141,11 @@ public class TracksFragment extends BaseFragment implements Transition.Transitio
         } else {
             scrollListener.onLoadFinished();
             //snack bar
+        }
+
+        FetchTracksEvent sticky = EventBus.getDefault().getStickyEvent(FetchTracksEvent.class);
+        if(sticky != null){
+            EventBus.getDefault().removeStickyEvent(sticky);
         }
     }
 
