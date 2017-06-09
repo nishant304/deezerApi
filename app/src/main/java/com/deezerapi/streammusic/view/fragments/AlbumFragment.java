@@ -80,17 +80,10 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album_layout, container, false);
         ButterKnife.bind(this, view);
-        imageView.setTransitionName(getArguments().getString(TRANSITION_NAME));
         Glide.with(getActivityContext()).load(getArguments().getString(URL)).into(imageView);
         recyclerView.setAdapter(albumAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivityContext(), COUMN_COUNT));
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

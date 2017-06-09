@@ -90,6 +90,7 @@ public class MainActivity extends BaseActivity {
         albumFragment.setSharedElementEnterTransition(
                 imageTransition);
 
+
         Bundle bundle = new Bundle();
         bundle.putString(AlbumFragment.QUERY, artistSelectedEvent.getName());
         bundle.putString(AlbumFragment.URL, artistSelectedEvent.getUrl());
@@ -97,7 +98,7 @@ public class MainActivity extends BaseActivity {
         albumFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction()
-                .addSharedElement(artistSelectedEvent.getImageView(), transitionName)
+                .addSharedElement(artistSelectedEvent.getImageView(), "random")
                 .addToBackStack(ALBUM_TAG)
                 .replace(R.id.container, albumFragment)
                 .commit();

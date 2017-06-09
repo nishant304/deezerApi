@@ -75,6 +75,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.Holder> {
         }
 
         holder.tvArtisitName.setText(list.get(position).getName());
+        holder.ivArtistImage.setTransitionName("name"+position);
         Glide.with(holder.ivArtistImage.getContext())
                 .load(list.get(position)
                         .getPicture())

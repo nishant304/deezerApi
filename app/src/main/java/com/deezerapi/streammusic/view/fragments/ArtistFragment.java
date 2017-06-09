@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  * Created by nishant on 19.05.17.
  */
 
-public class ArtistFragment extends BaseFragment {
+public class ArtistFragment extends BaseFragment  {
 
     @BindView(R.id.recyclerView)
     public RecyclerView recyclerView;
