@@ -3,14 +3,24 @@ package com.deezerapi.streammusic.view.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.transition.ChangeTransform;
+import android.transition.Explode;
 import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.deezerapi.streammusic.ArtistSelectedEvent;
@@ -79,22 +89,24 @@ public class MainActivity extends BaseActivity {
         searchView.onActionViewCollapsed();
 
         AlbumFragment albumFragment = new AlbumFragment();
-        String transitionName = artistSelectedEvent.getImageView().getTransitionName();
-        if (transitionName == null) {
-            transitionName = UUID.randomUUID().toString();
-        }
-        artistSelectedEvent.imageView.setTransitionName(transitionName);
+        Slide slide = new Slide(Gravity.BOTTOM);
+        //slide.setStartDelay(300);
+        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
+                android.R.interpolator.linear_out_slow_in));
+        android.transition.TransitionSet transitionSet = new android.transition.TransitionSet();
+        transitionSet.addTransition(slide).addTransition(new ChangeTransform());
         albumFragment.setEnterTransition(new Fade());
         ImageTransition imageTransition = new ImageTransition();
         imageTransition.addListener(albumFragment);
+        //imageTransition.setStartDelay(300);
         albumFragment.setSharedElementEnterTransition(
                 imageTransition);
+        albumFragment.setExitTransition(new Explode());
 
 
         Bundle bundle = new Bundle();
         bundle.putString(AlbumFragment.QUERY, artistSelectedEvent.getName());
         bundle.putString(AlbumFragment.URL, artistSelectedEvent.getUrl());
-        bundle.putString(AlbumFragment.TRANSITION_NAME, transitionName);
         albumFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction()

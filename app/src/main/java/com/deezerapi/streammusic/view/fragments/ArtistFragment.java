@@ -3,6 +3,7 @@ package com.deezerapi.streammusic.view.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,7 +56,8 @@ public class ArtistFragment extends BaseFragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_artist_layout, container, false);
+        postponeEnterTransition();
+        final View view = inflater.inflate(R.layout.fragment_artist_layout, container, false);
         ButterKnife.bind(this, view);
         artistAdapter = new ArtistAdapter(getActivityContext(), list);
         artistAdapter.setHasStableIds(true);
@@ -64,6 +66,13 @@ public class ArtistFragment extends BaseFragment  {
         scrollListener = new ScrollListener(linearLayoutManager);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(scrollListener);
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                startPostponedEnterTransition();
+            }
+        });
         return view;
     }
 

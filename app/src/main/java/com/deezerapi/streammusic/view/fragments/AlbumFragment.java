@@ -82,7 +82,20 @@ public class AlbumFragment extends BaseFragment implements Transition.Transition
         ButterKnife.bind(this, view);
         Glide.with(getActivityContext()).load(getArguments().getString(URL)).into(imageView);
         recyclerView.setAdapter(albumAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivityContext(), COUMN_COUNT));
+        GridLayoutManager gridLayoutManager =  new GridLayoutManager(getActivityContext(),3);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int mod = position%6;
+                if(mod == 5){
+                    return 3;
+                }else if(mod == 3){
+                    return 2;
+                }
+                return 1;
+            }
+        });
+        recyclerView.setLayoutManager(gridLayoutManager);
         return view;
     }
 
